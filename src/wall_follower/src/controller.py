@@ -10,9 +10,9 @@ import rospy
 class PID():
     def __init__(self):
         # Set gains.
-        self.Kp = 0.04
-        self.Ki = 0.002
-        self.Kd = 0.03
+        self.Kp = 0.35
+        self.Ki = 0.001
+        self.Kd = 0.01
         self.sample_time = 0.0
 
         self.PTerm = 0.0
@@ -20,7 +20,7 @@ class PID():
         self.DTerm = 0.0
 
         self.dist_weight_ = 1
-        self.angle_weight_ = 0.1
+        self.angle_weight_ = 1
 
 
         self.current_time = time.time()

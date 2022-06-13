@@ -10,6 +10,8 @@ from sensor_msgs.msg import LaserScan
 # from geometry_msgs.msg import Twist
 from ackermann_msgs.msg import AckermannDrive, AckermannDriveStamped
 from controller import PID
+import serial
+
 
 class WallFollower:
     # Import ROS parameters from the "params.yaml" file.
@@ -18,7 +20,7 @@ class WallFollower:
     SCAN_TOPIC = "/scan"
     DRIVE_TOPIC = "/drive"
     SIDE = -1 # -1 right is and +1 is left
-    VELOCITY = 0.2
+    VELOCITY = 0.6
     DESIRED_DISTANCE = 1.3
 
     def __init__(self):
@@ -48,6 +50,7 @@ class WallFollower:
         self.vel_cmd = self.VELOCITY
 
         self.pid = PID()
+        self.serialInterface = serial.Serial('/dev/ttyACM0', 9600, timeout = 0.1)
     
     def GetLocalSideWallCoords(self, ranges, angle_min, angle_max, angle_step):
         # Slice out the interesting samples from our scan. pi/2 radians from pi/4 to (pi - pi/4) radians for the right side.
@@ -166,6 +169,8 @@ class WallFollower:
             drive_msg.drive.speed = self.VELOCITY
             # drive_msg.drive.acceleration = 1
             self.drive_pub.publish(drive_msg)
+            self.serialInterface.write(str(steer + ";").encode('utf-8'))
+            self.serialInterface.flush()
 
 
 
